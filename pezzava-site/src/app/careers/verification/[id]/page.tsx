@@ -6,14 +6,8 @@ import {
   ArrowLeft, GraduationCap, Building2, 
   UserCheck, CheckCircle2 
 } from "lucide-react";
-import { VERIFIED_INTERNS } from "@/data/interns";
+import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
-
-export async function generateStaticParams() {
-  return Object.keys(VERIFIED_INTERNS).map((id) => ({
-    id: id,
-  }));
-}
 
 export default async function VerificationDetailPage({
   params,
@@ -21,9 +15,14 @@ export default async function VerificationDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const student = VERIFIED_INTERNS[id.toUpperCase()];
+  
+  const { data: student, error } = await supabase
+    .from('intern_records')
+    .select('*')
+    .eq('ref', id.toUpperCase())
+    .single();
 
-  if (!student) {
+  if (error || !student) {
     notFound();
   }
 
@@ -77,7 +76,7 @@ export default async function VerificationDetailPage({
             <div className="p-10 md:p-16 grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 { icon: "user", label: "Intern's Name", value: student.name },
-                { icon: "user", label: "Father's Name", value: student.fatherName },
+                { icon: "user", label: "Father's Name", value: student.father_name },
                 { icon: "building", label: "College Name", value: student.college },
                 { icon: "briefcase", label: "Company", value: student.company },
                 { icon: "briefcase", label: "Role / Department", value: student.role },

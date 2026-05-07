@@ -10,16 +10,34 @@ import {
   UserCheck, Search, AlertCircle, CheckCircle2 
 } from "lucide-react";
 
-import { VERIFIED_INTERNS } from "@/data/interns";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 const VerificationContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchId, setSearchId] = useState("");
-  const [currentIntern, setCurrentIntern] = useState<any>(null);
+  const [internsList, setInternsList] = useState<any[]>([]);
   const [error, setError] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchInterns();
+  }, []);
+
+  const fetchInterns = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('intern_records')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setInternsList(data);
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     const ref = searchParams.get("ref");
@@ -28,22 +46,22 @@ const VerificationContent = () => {
     }
   }, [searchParams]);
 
-  const handleVerify = (id: string) => {
+  const handleVerify = async (id: string) => {
     setIsSearching(true);
     setError(false);
     
-    // Simulate a small delay for "Verification" feel
-    setTimeout(() => {
-      const intern = VERIFIED_INTERNS[id];
-      if (intern) {
-        // Navigate to the individual page
-        router.push(`/careers/verification/${id}`);
-      } else {
-        setCurrentIntern(null);
-        setError(true);
-      }
-      setIsSearching(false);
-    }, 600);
+    const { data, error: fetchError } = await supabase
+      .from('intern_records')
+      .select('ref')
+      .eq('ref', id)
+      .single();
+
+    if (data && !fetchError) {
+      router.push(`/careers/verification/${id}`);
+    } else {
+      setError(true);
+    }
+    setIsSearching(false);
   };
 
   const getIcon = (type: string) => {
@@ -136,26 +154,42 @@ const VerificationContent = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-50">
-                {Object.values(VERIFIED_INTERNS).map((intern) => (
-                  <tr 
-                    key={intern.ref}
-                    className={`hover:bg-primary/5 transition-colors cursor-pointer group ${currentIntern?.ref === intern.ref ? 'bg-primary/10' : ''}`}
-                    onClick={() => router.push(`/careers/verification/${intern.ref}`)}
-                  >
-                    <td className="p-6 font-body text-sm font-bold text-primary">{intern.ref}</td>
-                    <td className="p-6">
-                      <div className="font-display font-bold text-on-surface group-hover:text-primary transition-colors">{intern.name}</div>
-                      <div className="font-body text-[10px] text-on-surface-variant/60 uppercase tracking-widest">{intern.college}</div>
-                    </td>
-                    <td className="p-6 font-body text-sm text-on-surface-variant">{intern.role}</td>
-                    <td className="p-6 font-body text-sm text-on-surface-variant">{intern.duration.split(' to ')[1]}</td>
-                    <td className="p-6 text-right">
-                      <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider border border-green-100 group-hover:bg-green-100 transition-colors">
-                        <CheckCircle2 size={12} /> Verified
-                      </span>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={5} className="p-12 text-center font-body text-stone-400">
+                      Loading verified directory...
                     </td>
                   </tr>
-                ))}
+                ) : internsList.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-12 text-center font-body text-stone-400">
+                      No verified records found in the directory.
+                    </td>
+                  </tr>
+                ) : (
+                  internsList.map((intern) => (
+                    <tr 
+                      key={intern.ref}
+                      className="hover:bg-primary/5 transition-colors cursor-pointer group"
+                      onClick={() => router.push(`/careers/verification/${intern.ref}`)}
+                    >
+                      <td className="p-6 font-body text-sm font-bold text-primary">{intern.ref}</td>
+                      <td className="p-6">
+                        <div className="font-display font-bold text-on-surface group-hover:text-primary transition-colors">{intern.name}</div>
+                        <div className="font-body text-[10px] text-on-surface-variant/60 uppercase tracking-widest">{intern.college}</div>
+                      </td>
+                      <td className="p-6 font-body text-sm text-on-surface-variant">{intern.role}</td>
+                      <td className="p-6 font-body text-sm text-on-surface-variant">
+                        {intern.duration?.includes(' to ') ? intern.duration.split(' to ')[1] : intern.duration}
+                      </td>
+                      <td className="p-6 text-right">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider border border-green-100 group-hover:bg-green-100 transition-colors">
+                          <CheckCircle2 size={12} /> Verified
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
