@@ -43,7 +43,7 @@ export const CursorFollower = () => {
         scale: isHovering ? 2.5 : 1,
         backgroundColor: isHovering ? "rgba(92, 99, 28, 0.1)" : "transparent",
       }}
-      transition={{ scale: { type: "spring", ...springConfig } }}
+      transition={{ scale: { type: "spring" as const, ...springConfig } }}
     />
   );
 };

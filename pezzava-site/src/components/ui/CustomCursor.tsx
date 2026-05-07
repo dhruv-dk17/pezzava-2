@@ -56,7 +56,7 @@ export default function CustomCursor() {
           rotate: isClicking ? 45 : 0,
         }}
         transition={{
-          type: "spring",
+          type: "spring" as const,
           stiffness: 150,
           damping: 15,
           mass: 0.8,
@@ -73,7 +73,7 @@ export default function CustomCursor() {
           opacity: isHovered ? 0.5 : 1,
         }}
         transition={{
-          type: "spring",
+          type: "spring" as const,
           stiffness: 450,
           damping: 25,
           mass: 0.1,
@@ -89,7 +89,7 @@ export default function CustomCursor() {
           scale: isHovered ? 2 : 1,
         }}
         transition={{
-          type: "spring",
+          type: "spring" as const,
           stiffness: 50,
           damping: 20,
           mass: 1.2,

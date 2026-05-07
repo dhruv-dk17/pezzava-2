@@ -41,7 +41,7 @@ export default function CinematicText({
       y: 0,
       rotateX: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         damping: 25,
         stiffness: 120,
       },
@@ -51,7 +51,7 @@ export default function CinematicText({
       y: 25,
       rotateX: 15,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         damping: 25,
         stiffness: 120,
       },

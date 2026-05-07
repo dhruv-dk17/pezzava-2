@@ -10,77 +10,11 @@ import {
   UserCheck, Search, AlertCircle, CheckCircle2 
 } from "lucide-react";
 
-// Data Structure for Interns
-const VERIFIED_INTERNS: Record<string, any> = {
-  "PZV-INT-2026-01": {
-    name: "Simran Kumawat",
-    fatherName: "Hansraj Kumawat",
-    college: "St. Wilfred's PG College",
-    role: "E-Commerce Operations Intern",
-    duration: "01-04-2026 to 30-04-2026",
-    authority: "Khushi Sharma (HR Head)",
-    company: "Pezzava",
-    status: "Completed",
-    ref: "PZV-INT-2026-01"
-  },
-  "PZV-INT-2026-02": {
-    name: "Abhay Singh Shekhawat",
-    fatherName: "Goverdhan Singh",
-    college: "St. Wilfred's PG College",
-    role: "Product listing intern",
-    duration: "01-04-2026 to 30-04-2026",
-    authority: "Khushi Sharma",
-    company: "Pezzava",
-    status: "Completed",
-    ref: "PZV-INT-2026-02"
-  },
-  "PZV-INT-2025-14": {
-    name: "Aarav Sharma",
-    fatherName: "Rajesh Sharma",
-    college: "University Commerce College, Jaipur",
-    role: "Digital Marketing Strategy",
-    duration: "15-12-2024 to 15-01-2025",
-    authority: "Vikram Rathore (HR Manager)",
-    company: "Pezzava",
-    status: "Completed",
-    ref: "PZV-INT-2025-14"
-  },
-  "PZV-INT-2025-08": {
-    name: "Ishita Gupta",
-    fatherName: "Sanjay Gupta",
-    college: "Maharani College",
-    role: "Content Writing Intern",
-    duration: "01-06-2024 to 30-06-2024",
-    authority: "Vikram Rathore (HR Manager)",
-    company: "Pezzava",
-    status: "Completed",
-    ref: "PZV-INT-2025-08"
-  },
-  "PZV-INT-2024-12": {
-    name: "Rohan Joshi",
-    fatherName: "Sunil Joshi",
-    college: "Rajasthan University, Jaipur",
-    role: "Operations Management",
-    duration: "01-11-2023 to 30-11-2023",
-    authority: "Sanjay Mathur (Operations Lead)",
-    company: "Pezzava",
-    status: "Completed",
-    ref: "PZV-INT-2024-12"
-  },
-  "PZV-INT-2024-05": {
-    name: "Priyanka Verma",
-    fatherName: "M.L. Verma",
-    college: "Kanoria PG Mahila Mahavidyalaya",
-    role: "Fashion Design Intern",
-    duration: "01-02-2024 to 01-03-2024",
-    authority: "Sanjay Mathur (Operations Lead)",
-    company: "Pezzava",
-    status: "Completed",
-    ref: "PZV-INT-2024-05"
-  }
-};
+import { VERIFIED_INTERNS } from "@/data/interns";
+import { useRouter } from "next/navigation";
 
 const VerificationContent = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [searchId, setSearchId] = useState("");
   const [currentIntern, setCurrentIntern] = useState<any>(null);
@@ -102,8 +36,8 @@ const VerificationContent = () => {
     setTimeout(() => {
       const intern = VERIFIED_INTERNS[id];
       if (intern) {
-        setCurrentIntern(intern);
-        setSearchId(id);
+        // Navigate to the individual page
+        router.push(`/careers/verification/${id}`);
       } else {
         setCurrentIntern(null);
         setError(true);
@@ -179,61 +113,7 @@ const VerificationContent = () => {
         </div>
       )}
 
-      {/* Verification Card */}
-      {currentIntern && (
-        <div className="max-w-4xl mx-auto mb-20 animate-in fade-in zoom-in-95 duration-700">
-          <div className="bg-white border border-stone-200 rounded-[2rem] shadow-2xl overflow-hidden">
-            {/* Card Header */}
-            <div className="bg-on-surface p-8 text-white flex justify-between items-center border-b border-white/10">
-              <div className="relative w-32 h-16">
-                <Image src="/logo.png" alt="Pezzava" fill className="object-contain brightness-0 invert" />
-              </div>
-              <div className="text-right">
-                <span className="block font-body text-[10px] uppercase tracking-[0.3em] opacity-60 mb-1">Official Verification</span>
-                <span className="font-body font-bold text-warm-gold tracking-widest text-sm">REF: {currentIntern.ref}</span>
-              </div>
-            </div>
-
-            {/* Status Badge */}
-            <div className="px-10 md:px-16 pt-10 flex items-center gap-3">
-              <span className="inline-flex items-center gap-2 font-display text-base font-bold text-green-700 bg-green-50 px-5 py-2 rounded-full border border-green-200">
-                <CheckCircle2 size={18} className="text-green-600" />
-                Internship Verified: {currentIntern.status}
-              </span>
-            </div>
-            
-            {/* Details Grid */}
-            <div className="p-10 md:p-16 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                { icon: "user", label: "Intern's Name", value: currentIntern.name },
-                { icon: "user", label: "Father's Name", value: currentIntern.fatherName },
-                { icon: "building", label: "College Name", value: currentIntern.college },
-                { icon: "briefcase", label: "Company", value: currentIntern.company },
-                { icon: "briefcase", label: "Role / Department", value: currentIntern.role },
-                { icon: "calendar", label: "Duration", value: currentIntern.duration },
-                { icon: "authority", label: "HR Issuing Authority", value: currentIntern.authority },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-stone-50 flex items-center justify-center border border-stone-100 flex-shrink-0">
-                    {getIcon(item.icon)}
-                  </div>
-                  <div>
-                    <span className="block font-body text-[10px] uppercase tracking-widest text-on-surface-variant/60 mb-1">{item.label}</span>
-                    <span className="font-display text-lg font-bold text-on-surface leading-snug">{item.value}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="bg-stone-50 p-8 text-center border-t border-stone-200">
-              <p className="font-body text-sm italic text-on-surface-variant leading-relaxed">
-                This is an electronically verified record of Pezzava. Authentication is provided via the official company portal. 
-                For inquiries: <span className="font-bold text-primary">pezzava@gmail.com</span>.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Verification Card removed as each student has a dedicated page */}
 
       
       {/* Verified Interns Directory (Always Visible) */}
@@ -260,17 +140,17 @@ const VerificationContent = () => {
                   <tr 
                     key={intern.ref}
                     className={`hover:bg-primary/5 transition-colors cursor-pointer group ${currentIntern?.ref === intern.ref ? 'bg-primary/10' : ''}`}
-                    onClick={() => handleVerify(intern.ref)}
+                    onClick={() => router.push(`/careers/verification/${intern.ref}`)}
                   >
                     <td className="p-6 font-body text-sm font-bold text-primary">{intern.ref}</td>
                     <td className="p-6">
-                      <div className="font-display font-bold text-on-surface">{intern.name}</div>
+                      <div className="font-display font-bold text-on-surface group-hover:text-primary transition-colors">{intern.name}</div>
                       <div className="font-body text-[10px] text-on-surface-variant/60 uppercase tracking-widest">{intern.college}</div>
                     </td>
                     <td className="p-6 font-body text-sm text-on-surface-variant">{intern.role}</td>
                     <td className="p-6 font-body text-sm text-on-surface-variant">{intern.duration.split(' to ')[1]}</td>
                     <td className="p-6 text-right">
-                      <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider border border-green-100">
+                      <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider border border-green-100 group-hover:bg-green-100 transition-colors">
                         <CheckCircle2 size={12} /> Verified
                       </span>
                     </td>

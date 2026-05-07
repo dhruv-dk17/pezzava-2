@@ -28,7 +28,7 @@ export default function MarketplaceToggle({ activeStore, setActiveStore }: Marke
             <motion.div
               layoutId="toggle-bg"
               className={`absolute inset-0 rounded-full ${opt.color} shadow-lg`}
-              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              transition={{ type: "spring" as const, bounce: 0.2, duration: 0.6 }}
             />
           )}
           <span className="relative z-10 flex items-center gap-2">
